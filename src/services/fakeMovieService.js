@@ -7,7 +7,7 @@ const movies = [
     genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
     numberInStock: 6,
     dailyRentalRate: 2.5,
-    publishDate: "2018-01-03T19:04:28.809Z"
+    publishDate: "2018-01-03T19:04:28.809Z",
   },
   {
     _id: "5b21ca3eeb7f6fbccd471816",
@@ -94,4 +94,9 @@ export function deleteMovie(id) {
   let movieInDb = movies.find(m => m._id === id);
   movies.splice(movies.indexOf(movieInDb), 1);
   return movieInDb;
+}
+
+export function setLiked(id, isLiked) {
+  let movieInDb = movies.find(m => m._id === id);
+  movieInDb.liked = isLiked;
 }
