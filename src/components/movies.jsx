@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import {getMovies} from "../services/fakeMovieService"
 import Like from './common/like'
+import Pagination from './common/pagination'
+import {paginate} from '../utils/paginate'
+
 
 class Movies extends Component {
     state = {
-        movies: getMovies()
+        movies: getMovies(),
+        pageSize: 4,
+        currentPage: 1
     }
 
     handleDelete(movie) {
@@ -20,11 +25,30 @@ class Movies extends Component {
         this.setState({ movies });
     }
 
+    handlePageChange = pageNumber => {
+        let { currentPage } = this.state;
+        currentPage = pageNumber;
+        this.setState({ currentPage });
+    }
+
+    handleNextPage = pageNumber => {
+        let { currentPage } = this.state;
+        currentPage = pageNumber + 1;
+        this.setState({ currentPage });
+    }
+
+    handlePreviousPage = pageNumber => {
+        let { currentPage } = this.state;
+        currentPage = pageNumber - 1;
+        this.setState({ currentPage });
+    }
+
     render() {
             const { length: count } = this.state.movies;
+            const { movies: allMovies, pageSize, currentPage } = this.state;
+            const movies = paginate(allMovies, pageSize, currentPage);
             if (count === 0)
                 return <p>There are no movies in this database.</p>;
-        
             return(
                 <React.Fragment>
                     <p>Showing {this.state.movies.length} Movies in The Database</p>
@@ -39,8 +63,8 @@ class Movies extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.movies.map(movie => 
-                                <tr>
+                            {movies.map(movie => 
+                                <tr key={movie.id}>
                                     <td>{movie.title}</td>
                                     <td>{movie.genre.name}</td>
                                     <td>{movie.numberInStock}</td>
@@ -57,6 +81,14 @@ class Movies extends Component {
                             )}
                         </tbody>
                     </table>
+                    <Pagination 
+                        currentPage={currentPage}
+                        itemsCount={count}
+                        pageSize={pageSize}
+                        handlePageChange={this.handlePageChange}
+                        handleNextPage={this.handleNextPage}
+                        handlePreviousPage={this.handlePreviousPage}
+                    />
                 </React.Fragment>
             );
     }
